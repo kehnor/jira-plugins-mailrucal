@@ -758,7 +758,7 @@ a.fc-more:hover {
 
 /* day row structure */
 
-.fc-basicWeek-view .fc-content-skeleton,
+.fc-agendaWeek-view .fc-content-skeleton,
 .fc-basicDay-view .fc-content-skeleton {
 	/* we are sure there are no day numbers in these views, so... */
 	padding-top: 1px; /* add a pixel to make sure there are 2px padding above events */

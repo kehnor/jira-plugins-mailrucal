@@ -7,7 +7,7 @@
         <param name="atlassian-data-center-compatible">true</param>
     </plugin-info>
 
-    <resource type="i18n" name="i18n" location="ru.mail.jira.plugins.calendar.mailrucalendar"/>
+    <resource type="i18n" name="i18n" location="ru.mail.jira.plugins.calendar.mailrucalendar_fr"/>
 
     <rest key="mailrucalendar-rest" path="/mailrucalendar" version="1.0" />
 
@@ -44,11 +44,19 @@
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
         <dependency>com.atlassian.auiplugin:aui-inline-dialog2</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-        <resource type="download" name="moment.js" location="ru/mail/jira/plugins/calendar/third-party-libs/moment.js"/>
+        <resource type="download" name="moment.js" location="ru/mail/jira/plugins/calendar/datetimepicker/third-party-libs/moment.js"/>  
+        
+        
         <resource type="download" name="fullcalendar.css" location="ru/mail/jira/plugins/calendar/third-party-libs/fullcalendar.css"/>
         <resource type="download" name="fullcalendar.js" location="ru/mail/jira/plugins/calendar/third-party-libs/fullcalendar.js"/>
+        
+        
+        <resource type="download" name="jquery.datetimepicker.css" location="ru/mail/jira/plugins/calendar/third-party-libs/jquery.datetimepicker.css"/>
+        <resource type="download" name="jquery.datetimepicker.js" location="ru/mail/jira/plugins/calendar/third-party-libs/jquery.datetimepicker.js"/>
+        
+        
         <resource type="download" name="calendar-view.js" location="ru/mail/jira/plugins/calendar/calendar-view.js"/>
-        <resource type="download" name="calendar-view.css" location="ru/mail/jira/plugins/calendar/calendar-view.css"/>
+        <resource type="download" name="calendar-view.css" location="ru/mail/jira/plugins/calendar/calendar-view.css"/>    
     </web-resource>
 
     <web-item key="calendar-link" name="Calendar Link" section="system.top.navigation.bar" weight="47">

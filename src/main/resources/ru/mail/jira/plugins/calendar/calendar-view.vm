@@ -32,6 +32,12 @@
                     $i18n.getText( "ru.mail.jira.plugins.calendar.addCalendar" )
                 </button>
             </div>
+            <div class="aui-buttons">
+            	<button id="event-add" class="aui-button">
+                	<span class="aui-icon aui-icon-small aui-iconfont-add"></span>
+                	$i18n.getText( "ru.mail.jira.plugins.calendar.addEvent" )
+          		</button>
+      	  </div>	
         </div>
     </div>
     <ol class="aui-nav aui-nav-breadcrumbs"></ol>
@@ -63,5 +69,55 @@
     </div>
 </div>
 #parse("ru/mail/jira/plugins/calendar/calendar-dialog.vm")
+#parse("ru/mail/jira/plugins/calendar/event-dialog.vm")
+
+
+
+
+
+<script>
+
+#*
+jQuery('#datetimepicker3').datetimepicker({
+	mask:true,
+	lang:'fr',
+	step:5,
+	validateOnBlur:false
+});
+});
+*#
+
+
+
+
+
+jQuery(function(){
+ jQuery('#date_timepicker_start').datetimepicker({
+ 	mask:true,
+	lang:'fr',
+	step:5,
+	validateOnBlur:false,
+  onShow:function( ct ){
+   this.setOptions({
+    maxDate:jQuery('#date_timepicker_end').val()?jQuery('#date_timepicker_end').val():false
+   })
+  },
+ });
+ jQuery('#date_timepicker_end').datetimepicker({
+  	mask:true,
+	lang:'fr',
+	step:5,
+	validateOnBlur:false,
+  onShow:function( ct ){
+   this.setOptions({
+    minDate:jQuery('#date_timepicker_start').val()?jQuery('#date_timepicker_start').val():false
+   })
+  },
+ });
+});
+
+
+</script>
+
 </body>
 </html>

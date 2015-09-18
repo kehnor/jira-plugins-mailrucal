@@ -122,12 +122,13 @@
         function loadFullCalendar(view, hideWeekends) {
             var viewRenderFirstTime = true;
             fullCalendarInstance = $calendar.fullCalendar({
+            	lang: 'fr',
                 contentHeight: 'auto',
                 defaultView: view,
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'quarter,month,basicWeek,basicDay'
+                    right: 'quarter,month,agendaWeek,basicDay'
                 },
                 views: {
                     quarter: {
@@ -372,6 +373,7 @@
         });
 
         $('#calendar-add').click(function (e) {
+        //	alert("calendar-add");
             e.preventDefault();
 
             sharedCounter = 0;
@@ -391,6 +393,34 @@
                 }
             });
         });
+        
+        
+        
+        $('#event-add').click(function (e) {
+        //	alert("event-add");
+            e.preventDefault(); // -> comment ca eviter l'action par défaut ?
+        	
+            sharedCounter = 0;
+
+           // $('#calendar-dialog-owner-block').addClass('hidden'); -> en fait on cache une div qui contient un label mais il est référencé nulle part...
+            
+
+            $('#event-dialog-header').text(AJS.I18n.getText('ru.mail.jira.plugins.calendar.addEvent'));
+            $('#event-dialog-ok').text(AJS.I18n.getText('common.words.create'));
+
+            $.ajax({
+                type: 'GET',
+                url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar',
+                success: function () {
+                    AJS.dialog2('#event-dialog').show();
+                },
+                error: function (request) {
+                    alert(request.responseText);
+                }
+            });
+        });
+        
+        
 
         $(document).on('click', '.calendar-edit', function (e) {
             e.preventDefault();
@@ -789,6 +819,10 @@
         $('#calendar-dialog-cancel').click(function () {
             AJS.dialog2('#calendar-dialog').hide();
         });
+        
+        $('#event-dialog-cancel').click(function () {
+            AJS.dialog2('#event-dialog').hide();
+        });
 
         $('#calendar-dialog-shares-group').click(function (e) {
             e.preventDefault();
@@ -973,5 +1007,7 @@
                 return { id: key, text: roles[key] };
             }));
         }
-    });
+    });   
 })(AJS.$);
+
+

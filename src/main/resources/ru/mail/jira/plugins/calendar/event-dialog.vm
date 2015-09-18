@@ -1,0 +1,82 @@
+<section role="dialog" id="event-dialog" class="aui-layer aui-dialog2" aria-hidden="true">
+    <input type="hidden" id="event-dialog-id">
+    <header class="aui-dialog2-header">
+        <h2 id="event-dialog-header" class="aui-dialog2-header-main"></h2>
+    </header>
+    <div class="aui-dialog2-content">
+
+    <form id="event-dialog-form" class="aui ajs-dirty-warning-exempt">
+    <div id="event-dialog-common-fields">
+        <div id="event-dialog-error-panel" class="aui-message aui-message-error hidden"></div>
+        <input type="hidden" id="event-dialog-calendar-id">
+
+
+        <div class="field-group">
+            <label for="event-dialog-name">
+                <span class="aui-icon icon-required"></span>
+                $i18n.getText( "common.words.name" )
+            </label>
+            <input class="text long-field" type="text" id="event-dialog-name" maxlength="254">
+            <div id="event-dialog-name-error" class="error hidden"></div>
+        </div>
+        
+        
+        <div class="field-group">
+            <label for="event-dialog-start">
+                <span class="aui-icon icon-required"></span>
+                Début de l'événement
+            </label>
+            <input class="text" type="text" id="date_timepicker_start" maxlength="20">
+        </div>
+        
+        
+        <div class="field-group">
+            <label for="event-dialog-all-day">
+                Toute la journée
+            </label>
+            <input class="text" type="checkbox" id="all_day">
+        </div>
+        
+        
+        <div class="field-group">
+            <label for="event-dialog-end">
+                <span class="aui-icon icon-required"></span>
+                Fin de l'événement
+            </label>
+            <input class="text" type="text" id="date_timepicker_end" maxlength="20">
+        </div>
+        
+        
+        
+	</form>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    </div>
+    <footer class="aui-dialog2-footer" style="width: 100%">
+        <div class="aui-dialog2-footer-actions">
+            <button id="event-dialog-ok" class="aui-button aui-button-primary"></button>
+            <button id="event-dialog-cancel" class="aui-button aui-button-link">$i18n.getText( "common.words.cancel" )</button>
+        </div>
+    </footer>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+

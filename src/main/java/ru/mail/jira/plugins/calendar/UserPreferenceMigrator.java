@@ -139,7 +139,7 @@ public class UserPreferenceMigrator {
         for (int i = 0, n = userPreferencesNodeList.getLength(); i < n; i++) {
             Node item = userPreferencesNodeList.item(i);
             if ("defaultView".equals(item.getNodeName())) {
-                if (item.getTextContent().equals("basicWeek") || item.getTextContent().equals("basicDay"))
+                if (item.getTextContent().equals("agendaWeek") || item.getTextContent().equals("basicDay"))
                     result.defaultView = item.getTextContent();
                 else
                     result.defaultView = "month";

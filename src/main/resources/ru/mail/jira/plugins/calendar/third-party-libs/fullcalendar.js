@@ -10457,7 +10457,7 @@ fcViews.basicDay = {
 	duration: { days: 1 }
 };
 
-fcViews.basicWeek = {
+fcViews.agendaWeek = {
 	type: 'basic',
 	duration: { weeks: 1 }
 };
