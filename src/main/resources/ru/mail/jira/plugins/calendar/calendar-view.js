@@ -18,6 +18,12 @@
                 formatResult: format,
                 formatSelection: format
             });
+            
+            $('#event-dialog-color').auiSelect2({
+                minimumResultsForSearch: Infinity,
+                formatResult: format,
+                formatSelection: format
+            });
 
             function format(data) {
                 return '<div class="calendar-dialog-color-option" style="background:' + data.id + '"></div>';
@@ -106,7 +112,7 @@
             url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/userPreference',
             success: function (result) {
                 var view = result.calendarView ? result.calendarView : "month";
-                loadFullCalendar(view, result.hideWeekends);
+                loadFullCalendar(view, result.hideWeekends, result.hideVersions);
                 loadCalendars();
             },
             error: function (xhr) {
@@ -114,7 +120,7 @@
                 if (xhr.responseText)
                     msg += xhr.responseText;
                 alert(msg);
-                loadFullCalendar("month", false);
+                loadFullCalendar("month", false, false);
                 loadCalendars();
             }
         });
@@ -123,8 +129,11 @@
             var viewRenderFirstTime = true;
             fullCalendarInstance = $calendar.fullCalendar({
             	lang: 'fr',
+            	height : 800,
+        		minTime: '05:00:00',
+        		maxTime: '23:00:00',
                 contentHeight: 'auto',
-                defaultView: view,
+                defaultView: 'agendaWeek',
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -178,6 +187,53 @@
                         closeOnTriggerClick: true,
                         userLiveEvents: true
                     });
+                    
+                    
+           			$element.find('.fc-title').html(event.title);
+           			
+           			var content = $element.children(".fc-content");
+           			var listener = content.children(".glyphicon");
+           			
+           			if (event.title.match("-[0-9]+ :") || event.title.match("</del>")) {
+           				listener.removeClass("glyphicon-trash");
+           			}
+           				listener.bind('mousedown', function(e) {
+           					if (e.which == 1) {
+           						alert("fonction encore non implémentée")
+           						/*
+           						velocityTitle.value = event.title;
+           						velocityStart.value = event.start;
+           						velocityAction.value = "delete";
+           						calendar.fullCalendar('removeEvents', event._id);
+           						velocityForm.submit();
+           						*/
+           					}
+           				});
+           			
+
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                 },
                 viewRender: function(view) {
                     if (viewRenderFirstTime)
@@ -338,13 +394,18 @@
                     $calendarBlock.toggleClass('calendar-visible', visible);
 
                     if (visible) {
+                    	alert("get events if one calendar is clicked Alexis");
                         $calendar.fullCalendar('addEventSource', {
                             url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId + '/events',
-                            success: function () {
+                        //    url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent', 
+                            // Look over here Alexis
+        	
+                        	success: function () {
                                 changeEventSourceCallback(calendarId, visible);
                             }
                         })
                     } else {
+                    	alert("get events if one calendar is clicked but calendar invisible Alexis");
                         $calendar.fullCalendar('removeEventSource', AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId + '/events');
                         changeEventSourceCallback(calendarId, false);
                     }
@@ -371,7 +432,115 @@
                 }
             });
         });
+        
+        
+        
+        
+        
+        $('#calendar-versions-visibility').click(function (e) {
+            e.preventDefault();    
+            $.ajax({
+                type: 'PUT',
+                url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/userPreference/hideVersions',
+                success: function () {
+                    window.location.reload();
+                },
+                error: function (xhr) {
+                    var msg = "Error while trying to update user hide versions option. ";
+                    if (xhr.responseText)
+                        msg += xhr.responseText;
+                    alert(msg);
+                }
+            });
+        });
+        
+        
+        $('#calendar-custom-events-visibility').click(function (e) {             
+        	
+            e.preventDefault();  
+        	
+        	
+//            $.ajax({
+////                    var $calendarBlock = $('#calendar-list-item-block-' + calendarId);
+////                    $calendarBlock.find('span.aui-nav-item-label').text(name);
+////                    $calendarBlock.data('color', color);
+////
+////                    $okButton.removeAttr('disabled');
+////                    $cancelButton.removeAttr('disabled');
+////                    AJS.dialog2('#calendar-dialog').hide();
+//
+////                    if (result.visible) {
+////                        startLoadingCalendarsCallback();
+//
+//                        var $calendar = $('#calendar-full-calendar');
+//
+//                        var eventSource = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent';
+//
+//
+//                        $calendar.fullCalendar('addEventSource', {
+//                            url: eventSource,
+//                            success: function () {
+//                           console.log("Yay !");
+//                            	//     changeEventSourceCallback(calendarId, true, result.error);
+//                            }
+//                        });
+//
+//            });
+        	
+//        	
+//            var $calendar = $('#calendar-full-calendar');
+//console.log("before adding customEvent");
+//          //  var eventSource = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent';	
+//	          $.ajax({
+//	        	  type: 'GET',
+//	                url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent',
+//	                success: function (eventSource) {
+//	    	          console.log("Got my custom events now");
+//	    	          $calendar.fullCalendar('removeEventSource', eventSource);
+//	    	          console.log("removeEventSource called -> dunno why I should call it");
+//	    	          startLoadingCalendarsCallback();
+//	    	          console.log("startLoadingCalendarsCallback called -> dunno what it does");
+//                        $calendar.fullCalendar('addEventSource', {
+//                            url: eventSource,
+//                            success: function () {
+//                                console.log("Yay !");
+//                            }
+//                        });
+//	                }
+//
+//});
+//	          console.log("after adding customEvent");
+//            
 
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+        	
+            e.preventDefault();  
+            $.ajax({
+                type: 'PUT',
+                url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/userPreference/hideCustomEvent',
+                success: function () {
+                	window.location.reload();
+                },
+                error: function (xhr) {
+                    var msg = "Error while trying to update user hide customEvent option.";
+                    if (xhr.responseText)
+                        msg += xhr.responseText;
+                    alert(msg);
+                }
+            });
+            
+        });
+
+        
+        
+        
         $('#calendar-add').click(function (e) {
         //	alert("calendar-add");
             e.preventDefault();
@@ -402,7 +571,7 @@
         	
             sharedCounter = 0;
 
-           // $('#calendar-dialog-owner-block').addClass('hidden'); -> en fait on cache une div qui contient un label mais il est référencé nulle part...
+           $('#calendar-dialog-owner-block').addClass('hidden');// -> en fait on cache une div qui contient un label mais il est référencé nulle part...
             
 
             $('#event-dialog-header').text(AJS.I18n.getText('ru.mail.jira.plugins.calendar.addEvent'));
@@ -719,6 +888,8 @@
             };
 
             if (calendarId) {
+            	console.log("if called on normal load Alexis");
+            	alert("if called on normal load Alexis");
                 $.ajax({
                     type: 'PUT',
                     url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId,
@@ -738,6 +909,25 @@
                             var $calendar = $('#calendar-full-calendar');
                             var eventSource = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId + '/events';
 
+                            
+                            /*
+                            var tickets = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId + '/events';
+                            var customEvents = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent';
+                            var eventSource = tickets.concat(customEvents);
+                            
+         
+                                var out = '';
+                                for (var i in eventSource) {
+                                    out += i + ": " + eventSource[i] + "\n";
+                                }
+alert(out);
+                                console.log(out);
+                            */
+                            /* Look over here Alexis 
+                            * Besoin de concatener l'appel ci-dessus avec les customEvents ou peut être ailleurs si cet appel ajax est appellé plein de fois
+                            */
+                            
+
                             $calendar.fullCalendar('removeEventSource', eventSource);
                             startLoadingCalendarsCallback(); //todo:bad
 
@@ -754,6 +944,8 @@
                     error: handleAjaxError
                 });
             } else {
+            	console.log("What else ?");
+            	alert("What else ?");
                 $.ajax({
                     type: 'POST',
                     url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar',
@@ -815,6 +1007,237 @@
                 $cancelButton.removeAttr('disabled');
             }
         });
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /* Pavé énorme a editer ci-dessous */
+        
+        
+        
+        
+        
+        
+        
+        $('#event-dialog-ok').click(function (e) {
+            e.preventDefault();
+            var $okButton = $(this);
+            var $cancelButton = $('#event-dialog-cancel');
+            
+            
+            var calendarId = $('#calendar-dialog-id').val();
+            
+
+            $okButton.attr('disabled', 'disabled');
+            $cancelButton.attr('disabled', 'disabled');
+
+            $('#event-dialog-error-panel').text('').addClass('hidden');
+
+            $('#event-dialog').find('div.error').addClass('hidden').text('');
+
+            var name = $('#event-dialog-name').val();
+            var color = $('#calendar-dialog-color').val();
+
+            var eventStart = $('#date_timepicker_start').val();
+            var allDay = $("#event-dialog-all-day").val();
+            var eventEnd = $('#date_timepicker_end').val();
+
+            
+            var ajaxData = {
+                name: name,
+                color: color,
+                eventStart: eventStart,
+                allDay: allDay,
+                eventEnd: eventEnd,
+            };
+            
+      
+
+         //   if (calendarId) {
+            	alert("Valid calendarId")
+                $.ajax({
+                    type: 'POST',
+                    url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/customEvent/',
+                    data: ajaxData,
+                    success: function (result) {
+                    	alert("success");
+                        var $calendarBlock = $('#event-list-item-block-' + calendarId);
+                        $calendarBlock.find('span.aui-nav-item-label').text(name);
+                        $calendarBlock.data('color', color);
+
+                        $okButton.removeAttr('disabled');
+                        $cancelButton.removeAttr('disabled');
+                        AJS.dialog2('#event-dialog').hide();
+/*
+                        if (result.visible) {
+                            startLoadingCalendarsCallback();
+
+                            var $calendar = $('#calendar-full-calendar');
+                            var eventSource = AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendarId + '/events';
+
+                            $calendar.fullCalendar('removeEventSource', eventSource);
+                            startLoadingCalendarsCallback(); //todo:bad
+
+                            $calendar.fullCalendar('addEventSource', {
+                                url: eventSource,
+                                success: function () {
+                                    changeEventSourceCallback(calendarId, true, result.error);
+                                }
+                            });
+                        } else {
+                            changeEventSourceCallback(calendarId, false);
+                        }
+                        */
+                    },
+                    error: handleAjaxError
+                });
+            //} 
+            	/*else {
+                $.ajax({
+                    type: 'POST',
+                    url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar',
+                    data: ajaxData,
+                    success: function (calendar) {
+                        $('#calendar-my-calendar-list-header').css('display', 'block');
+                        $('#calendar-my-calendar-list').append(buildCalendarLink(calendar));
+
+                        $okButton.removeAttr('disabled');
+                        $cancelButton.removeAttr('disabled');
+                        AJS.dialog2('#event-dialog').hide();
+                        startLoadingCalendarsCallback();
+
+                        $('#calendar-full-calendar').fullCalendar('addEventSource', {
+                            url: AJS.contextPath() + '/rest/mailrucalendar/1.0/calendar/' + calendar.id + '/events',
+                            success: function () {
+                                changeEventSourceCallback(calendar.id, true);
+                            }
+                        });
+                    },
+                    error: handleAjaxError
+                });
+            }
+             */
+            
+            
+            function handleAjaxError (request) {
+            	alert("ajax error =/");
+                var field = request.getResponseHeader('X-Atlassian-Rest-Exception-Field');
+                if (field) {
+                    if (field.indexOf('group_') == 0) {
+                        var group = field.substr('group_'.length);
+                        $('#event-dialog-shares').find('input.event-dialog-shared-group').each(function (index, el) {
+                            var $el = $(el);
+                            if ($el.val() === group) {
+                                $('#' + $el.closest('.event-shared-block').attr('id') + '-error').removeClass('hidden').text(request.responseText);
+                            }
+                        });
+                    } else if (field.indexOf('project_role_') == 0) {
+                        var projectRoleId = field.substr('project_role_'.length);
+                        $('#event-dialog-shares').find('input.event-dialog-shared-role').each(function (index, el) {
+                            var $el = $(el);
+                            if ($el.val() === projectRoleId) {
+                                $('#' + $el.closest('.event-shared-block').attr('id') + '-error').removeClass('hidden').text(request.responseText);
+                            }
+                        });
+                    } else if (field.indexOf('project_') == 0) {
+                        var projectId = field.substr('project_'.length);
+                        $('#calendar-dialog-shares').find('input.event-dialog-shared-project').each(function (index, el) {
+                            var $el = $(el);
+                            if ($el.val() === projectId) {
+                                $('#' + $el.closest('.event-shared-block').attr('id') + '-error').removeClass('hidden').text(request.responseText);
+                            }
+                        });
+                    } else {
+                        $('#event-dialog-' + field + '-error').removeClass('hidden').text(request.responseText);
+                    }
+                } else
+                    $('#event-dialog-error-panel').removeClass('hidden').text(request.responseText);
+
+                $okButton.removeAttr('disabled');
+                $cancelButton.removeAttr('disabled');
+            }
+            
+            
+        });
+        
+        
+        
+        
+        
+        /* Pavé énorme a editer ci-dessus */
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         $('#calendar-dialog-cancel').click(function () {
             AJS.dialog2('#calendar-dialog').hide();
@@ -1007,6 +1430,56 @@
                 return { id: key, text: roles[key] };
             }));
         }
+        
+        
+
+        
+        
+        jQuery(function(){
+        	
+        	
+  		  var allDay = true;
+		  if ($("#event-dialog-all-day").is(":checked"))  {
+		   allDay = false;
+		  }
+
+        	
+        	 jQuery('#date_timepicker_start').datetimepicker({
+        	  format:'d/m/Y H:i',
+	      	 	mask:true,
+	    		lang:'fr',
+	    		step:5,
+        	  onShow:function( ct ){
+        	  },
+        	  timepicker:function(){
+          		  var allDay = true;
+        		  if ($("#event-dialog-all-day").is(":checked"))  {
+        		   allDay = false;
+        		  }
+        		  alert(allDay);
+        		  return allDay;
+        	  }
+
+        	 });
+        	 jQuery('#date_timepicker_end').datetimepicker({
+        	  format:'d/m/Y H:i',
+	      	 	mask:true,
+	    		lang:'fr',
+	    		step:5,
+        	  onShow:function( ct ){
+       		   var splittedStartDateTime = jQuery('#date_timepicker_start').val().split(" ");
+       		   var splittedStartDate = splittedStartDateTime[0].split("/");
+       		   var day = splittedStartDate[0];
+       		   var month = splittedStartDate[1];
+       		   var year = splittedStartDate[2];
+        	   this.setOptions({
+        		   minDate:year+"/"+month+"/"+day
+        	   })
+        	  },
+        	  timepicker:true
+        	 });
+    	});     
+        
     });   
 })(AJS.$);
 

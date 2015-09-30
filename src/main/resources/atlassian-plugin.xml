@@ -16,6 +16,7 @@
         <entity>ru.mail.jira.plugins.calendar.model.Calendar</entity>
         <entity>ru.mail.jira.plugins.calendar.model.UserData</entity>
         <entity>ru.mail.jira.plugins.calendar.model.Share</entity>
+        <entity>ru.mail.jira.plugins.calendar.model.IEvent</entity>
     </ao>
 
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
@@ -44,11 +45,13 @@
         <dependency>com.atlassian.auiplugin:dialog2</dependency>
         <dependency>com.atlassian.auiplugin:aui-inline-dialog2</dependency>
         <dependency>com.atlassian.auiplugin:aui-select2</dependency>
-        <resource type="download" name="moment.js" location="ru/mail/jira/plugins/calendar/datetimepicker/third-party-libs/moment.js"/>  
+        <resource type="download" name="moment.js" location="ru/mail/jira/plugins/calendar/third-party-libs/moment.js"/>  
         
-        
+         <resource type="download" name="bootstrap.min.css" location="ru/mail/jira/plugins/calendar/third-party-libs/bootstrap.min.css"/>
         <resource type="download" name="fullcalendar.css" location="ru/mail/jira/plugins/calendar/third-party-libs/fullcalendar.css"/>
         <resource type="download" name="fullcalendar.js" location="ru/mail/jira/plugins/calendar/third-party-libs/fullcalendar.js"/>
+        <resource type="download" name="lang-all.js" location="ru/mail/jira/plugins/calendar/third-party-libs/lang-all.js"/>
+
         
         
         <resource type="download" name="jquery.datetimepicker.css" location="ru/mail/jira/plugins/calendar/third-party-libs/jquery.datetimepicker.css"/>

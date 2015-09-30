@@ -12,6 +12,8 @@ public class UserPreferences {
     private boolean showTimeInDates;
     @XmlElement
     private boolean hideWeekends;
+    @XmlElement
+    private boolean hideVersions;
 
     public UserPreferences() { }
 
@@ -19,6 +21,7 @@ public class UserPreferences {
         if (userData != null) {
             this.calendarView = userData.getDefaultView();
             this.hideWeekends = userData.isHideWeekends();
+            this.hideVersions = userData.isHideVersions();
             this.showTimeInDates = userData.isShowTime();
         }
     }

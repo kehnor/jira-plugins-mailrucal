@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.mail.jira.plugins.calendar.model.Calendar;
+import ru.mail.jira.plugins.calendar.model.IEvent;
 import ru.mail.jira.plugins.calendar.model.Share;
 import ru.mail.jira.plugins.calendar.model.UserData;
 import ru.mail.jira.plugins.commons.RestFieldException;
@@ -54,7 +55,9 @@ public class CalendarManager {
 
     public static List<String> DISPLAYED_FIELDS;
 
-    public CalendarManager(ActiveObjects ao, CustomFieldManager customFieldManager, GlobalPermissionManager globalPermissionManager, GroupManager groupManager, JiraAuthenticationContext jiraAuthenticationContext, I18nHelper i18nHelper, PermissionManager permissionManager, ProjectManager projectManager, ProjectRoleManager projectRoleManager, SearchRequestManager searchRequestManager, SearchRequestService searchRequestService) {
+    public CalendarManager(ActiveObjects ao, CustomFieldManager customFieldManager, GlobalPermissionManager globalPermissionManager, GroupManager groupManager,
+            JiraAuthenticationContext jiraAuthenticationContext, I18nHelper i18nHelper, PermissionManager permissionManager, ProjectManager projectManager, ProjectRoleManager projectRoleManager,
+            SearchRequestManager searchRequestManager, SearchRequestService searchRequestService) {
         this.ao = ao;
         this.customFieldManager = customFieldManager;
         this.globalPermissionManager = globalPermissionManager;
@@ -121,27 +124,13 @@ public class CalendarManager {
         });
     }
 
-    public Calendar createCalendar(final String name,
-                                   final String source,
-                                   final String color,
-                                   final String eventStart,
-                                   final String eventEnd,
-                                   final String displayedFields,
-                                   final String shares) {
+    public Calendar createCalendar(final String name, final String source, final String color, final String eventStart, final String eventEnd, final String displayedFields, final String shares) {
         final ApplicationUser user = jiraAuthenticationContext.getUser();
         return createCalendar(user, name, source, color, eventStart, eventEnd, displayedFields, shares, true, false);
     }
 
-    public Calendar createCalendar(final ApplicationUser user,
-                                   final String name,
-                                   final String source,
-                                   final String color,
-                                   final String eventStart,
-                                   final String eventEnd,
-                                   final String displayedFields,
-                                   final String shares,
-                                   final boolean visible,
-                                   final boolean fromMigration) {
+    public Calendar createCalendar(final ApplicationUser user, final String name, final String source, final String color, final String eventStart, final String eventEnd,
+            final String displayedFields, final String shares, final boolean visible, final boolean fromMigration) {
         validateCalendar(user, name, source, color, eventStart, displayedFields, shares, true, fromMigration);
         final List<LocalShare> calendarShares = getLocalShares(shares);
         return ao.executeInTransaction(new TransactionCallback<Calendar>() {
@@ -157,6 +146,48 @@ public class CalendarManager {
                 return calendar;
             }
         });
+    }
+
+
+    public IEvent createCustomEvent(final String name, final String color, final String eventStart, final String eventEnd, final boolean allDay) {
+        validateCustomEvent(name, color, eventStart, eventEnd);
+        return ao.executeInTransaction(new TransactionCallback<IEvent>() {
+            @Override
+            public IEvent doInTransaction() {
+                IEvent customEvent = ao.create(IEvent.class);
+                setCustomEventFields(customEvent, name, color, eventStart, eventEnd, allDay);
+
+                return customEvent;
+            }
+        });
+    }
+
+    private void validateCustomEvent(String name, String color, String eventStart, String eventEnd) {
+        if (StringUtils.isBlank(name))
+            throw new RestFieldException(i18nHelper.getText("issue.field.required", i18nHelper.getText("common.words.name")), "name");
+        if (StringUtils.isBlank(color))
+            throw new RestFieldException(i18nHelper.getText("issue.field.required", i18nHelper.getText("admin.common.words.color")), "color");
+        if (StringUtils.isBlank(eventStart))
+            throw new RestFieldException(i18nHelper.getText("issue.field.required", i18nHelper.getText("ru.mail.jira.plugins.calendar.dialog.eventStart")), "event-start");
+        if (StringUtils.isBlank(eventEnd))
+            throw new RestFieldException(i18nHelper.getText("issue.field.required", i18nHelper.getText("ru.mail.jira.plugins.calendar.dialog.eventEnd")), "event-end"); // verifier que tout existe a ce
+                                                                                                                                                                        // niveau
+        if (!COLOR_PATTERN.matcher(color).matches())
+            throw new IllegalArgumentException("Bad color => " + color);
+    }
+
+    private void setCustomEventFields(IEvent customEvent, String name, String color, String eventStart, String eventEnd, boolean allDay) {
+        customEvent.setIssueKey(name);
+        customEvent.setColor(color);
+        customEvent.setStart(eventStart);
+        customEvent.setEnd(eventEnd);
+        customEvent.setAllDay(allDay);
+        customEvent.save();
+    }
+
+    public IEvent[] getCustomEvents() {
+        IEvent[] customEvents = ao.find(IEvent.class);
+        return customEvents;
     }
 
     private List<String> clearNotExistedCalendars(List<String> allCalendars) {
@@ -177,14 +208,8 @@ public class CalendarManager {
         });
     }
 
-    public Calendar updateCalendar(final int calendarId,
-                               final String name,
-                               final String source,
-                               final String color,
-                               final String eventStart,
-                               final String eventEnd,
-                               final String displayedFields,
-                               final String shares) {
+    public Calendar updateCalendar(final int calendarId, final String name, final String source, final String color, final String eventStart, final String eventEnd, final String displayedFields,
+            final String shares) {
         return ao.executeInTransaction(new TransactionCallback<Calendar>() {
             @Override
             public Calendar doInTransaction() {
@@ -204,8 +229,7 @@ public class CalendarManager {
         });
     }
 
-    private void validateCalendar(ApplicationUser user, String name, String source, String color,
-                                  String eventStart, String displayedFields, String shares, boolean isCreate, boolean fromMigrate){
+    private void validateCalendar(ApplicationUser user, String name, String source, String color, String eventStart, String displayedFields, String shares, boolean isCreate, boolean fromMigrate) {
         if (user == null)
             throw new IllegalArgumentException("User doesn't exist");
         if (StringUtils.isBlank(name))
@@ -280,8 +304,7 @@ public class CalendarManager {
 
                     if (!fromMigrate) {
                         if (!isUserAdmin && !permissionManager.hasPermission(Permissions.BROWSE, project, user, false))
-                            throw new RestFieldException(i18nHelper.getText("common.sharing.exception.no.permission.project", project.getName()),
-                                    "project_" + projectRoleFromShare.projectId);
+                            throw new RestFieldException(i18nHelper.getText("common.sharing.exception.no.permission.project", project.getName()), "project_" + projectRoleFromShare.projectId);
 
                         if (projectRoleFromShare.roleId != null) {
                             ProjectRole projectRole = projectRoleManager.getProjectRole(projectRoleFromShare.roleId);
@@ -289,7 +312,8 @@ public class CalendarManager {
                                 throw new RestFieldException(i18nHelper.getText("admin.errors.specified.role.does.not.exist"), "project_role_" + projectRoleFromShare.roleId);
 
                             if (!isUserAdmin && !projectRoleManager.isUserInProjectRole(user, projectRole, project))
-                                throw new RestFieldException(i18nHelper.getText("common.sharing.exception.no.permission.role", project.getName(), projectRole.getName()), "project_role_" + projectRoleFromShare.roleId);
+                                throw new RestFieldException(i18nHelper.getText("common.sharing.exception.no.permission.role", project.getName(), projectRole.getName()), "project_role_"
+                                        + projectRoleFromShare.roleId);
                         }
                     }
                 } else
@@ -333,18 +357,18 @@ public class CalendarManager {
                 if (!userCanUpdateAndDeleteCalendar(user, calendar.getAuthorKey()))
                     throw new SecurityException("No permission to edit calendar");
 
-                for (Share share: calendar.getShares())
+                for (Share share : calendar.getShares())
                     ao.delete(share);
 
                 try {
-                    for (UserData userData: ao.find(UserData.class)) {
+                    for (UserData userData : ao.find(UserData.class)) {
                         boolean userDataChanged = false;
                         String showedCalendarsStr = userData.getShowedCalendars();
                         if (StringUtils.isEmpty(showedCalendarsStr))
                             continue;
 
                         List<Integer> showedCalendars = new ArrayList<Integer>();
-                        for (String showedCalendarIdStr: StringUtils.split(showedCalendarsStr, ";")) {
+                        for (String showedCalendarIdStr : StringUtils.split(showedCalendarsStr, ";")) {
                             try {
                                 int showedCalendarId = Integer.parseInt(showedCalendarIdStr);
                                 if (showedCalendarId == calendarId || ao.get(Calendar.class, calendarId) == null)
@@ -374,7 +398,7 @@ public class CalendarManager {
         return ao.executeInTransaction(new TransactionCallback<UserData>() {
             @Override
             public UserData doInTransaction() {
-                UserData[] userDatas = ao.find(UserData.class,  Query.select().where("USER_KEY = ?", jiraAuthenticationContext.getUser().getKey()));
+                UserData[] userDatas = ao.find(UserData.class, Query.select().where("USER_KEY = ?", jiraAuthenticationContext.getUser().getKey()));
                 if (userDatas.length == 0)
                     return null;
                 return userDatas[0];
@@ -395,35 +419,36 @@ public class CalendarManager {
         });
     }
 
-    public void updateUserData(final String view, final Boolean hideWeekedns) {
-        updateUserData(jiraAuthenticationContext.getUser().getKey(), view, hideWeekedns);
+    public void updateUserData(final String view, final Boolean hideWeekends, final Boolean hideVersions, final Boolean hideCustomEvents) {
+        updateUserData(jiraAuthenticationContext.getUser().getKey(), view, hideWeekends, hideVersions, hideCustomEvents);
     }
 
-    public void updateUserData(final String userKey, final String view, final Boolean hideWeekends) {
+    public void updateUserData(final String userKey, final String view, final Boolean hideWeekends, final Boolean hideVersions, final Boolean hideCustomEvents) {
         ao.executeInTransaction(new TransactionCallback<Void>() {
             @Override
             public Void doInTransaction() {
-                UserData userData = notTransactionalUpdateUserData(userKey, view, hideWeekends);
+                UserData userData = notTransactionalUpdateUserData(userKey, view, hideWeekends, hideVersions, hideCustomEvents);
                 userData.save();
                 return null;
             }
         });
     }
 
-    public void updateUserData(@Nonnull final String userKey, @Nonnull final String view, final boolean hideWeekends, @Nonnull final List<Integer> extraShowedCalendars) {
+    public void updateUserData(@Nonnull final String userKey, @Nonnull final String view, final boolean hideWeekends, final Boolean hideVersions, final Boolean hideCustomEvents,
+            @Nonnull final List<Integer> extraShowedCalendars) {
         ao.executeInTransaction(new TransactionCallback<Void>() {
             @Override
             public Void doInTransaction() {
-                UserData userData = notTransactionalUpdateUserData(userKey, view, hideWeekends);
+                UserData userData = notTransactionalUpdateUserData(userKey, view, hideWeekends, hideVersions, hideCustomEvents);
                 if (extraShowedCalendars.size() > 0) {
                     if (userData.getShowedCalendars() != null) {
                         String[] split = StringUtils.split(userData.getShowedCalendars(), ';');
                         List<Integer> showedCalendarIds = new ArrayList<Integer>();
 
-                        for (String showedCalendarIdStr: Arrays.asList(split))
+                        for (String showedCalendarIdStr : Arrays.asList(split))
                             showedCalendarIds.add(Integer.parseInt(showedCalendarIdStr));
 
-                        for (Integer extraCalendarId: extraShowedCalendars) {
+                        for (Integer extraCalendarId : extraShowedCalendars) {
                             if (!showedCalendarIds.contains(extraCalendarId))
                                 showedCalendarIds.add(extraCalendarId);
                         }
@@ -439,18 +464,24 @@ public class CalendarManager {
         });
     }
 
-    private UserData notTransactionalUpdateUserData(String userKey, String view, Boolean hideWeekedns) {
+    private UserData notTransactionalUpdateUserData(String userKey, String view, Boolean hideWeekends, Boolean hideVersions, Boolean hideCustomEvents) {
         UserData userData = getUserData(userKey);
         if (userData == null) {
             userData = ao.create(UserData.class);
             userData.setUserKey(userKey);
             userData.setHideWeekends(false);
+            userData.setHideVersions(false);
+            userData.setHideCustomEvents(false);
             userData.setShowTime(false);
         }
         if (view != null)
             userData.setDefaultView(view);
-        if (hideWeekedns != null)
-            userData.setHideWeekends(hideWeekedns);
+        if (hideWeekends != null)
+            userData.setHideWeekends(hideWeekends);
+        if (hideVersions != null)
+            userData.setHideVersions(hideVersions);
+        if (hideCustomEvents != null)
+            userData.setHideCustomEvents(hideCustomEvents);
         return userData;
     }
 
@@ -520,7 +551,7 @@ public class CalendarManager {
 
     private void deleteOldShareDate(int calendarId) {
         Share[] shares = ao.find(Share.class, Query.select().where("CALENDAR_ID = ?", calendarId));
-        for (Share share: shares)
+        for (Share share : shares)
             ao.delete(share);
     }
 
@@ -539,6 +570,8 @@ public class CalendarManager {
         } else {
             userData = ao.create(UserData.class);
             userData.setHideWeekends(false);
+            userData.setHideVersions(false);
+            userData.setHideCustomEvents(false);
             userData.setShowTime(false);
             userData.setShowedCalendars(String.valueOf(calendar.getID()));
             userData.setUserKey(user.getKey());
@@ -571,6 +604,8 @@ public class CalendarManager {
                 if (userData == null) {
                     userData = ao.create(UserData.class);
                     userData.setHideWeekends(false);
+                    userData.setHideVersions(false);
+                    userData.setHideCustomEvents(false);
                     userData.setShowTime(false);
                     userData.setShowedCalendars(String.valueOf(calendar.getID()));
                     userData.setUserKey(jiraAuthenticationContext.getUser().getKey());

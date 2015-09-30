@@ -1,4 +1,4 @@
-<section role="dialog" id="event-dialog" class="aui-layer aui-dialog2" aria-hidden="true">
+<section role="dialog" id="event-dialog" class="aui-layer aui-dialog2 aui-dialog2-small" aria-hidden="true">
     <input type="hidden" id="event-dialog-id">
     <header class="aui-dialog2-header">
         <h2 id="event-dialog-header" class="aui-dialog2-header-main"></h2>
@@ -20,6 +20,19 @@
             <div id="event-dialog-name-error" class="error hidden"></div>
         </div>
         
+        <div class="field-group">
+            <label for="calendar-dialog-color">
+                <span class="aui-icon icon-required"></span>
+                $i18n.getText( "admin.common.words.color" )
+            </label>
+            <select class="select short-field calendar-dialog-color calendar-dialog-select" id="event-dialog-color">
+                #foreach( $color in $action.colors)
+                    <option value="$color">$color</option>
+                #end
+            </select>
+            <div id="calendar-dialog-color-error" class="error hidden"></div>
+        </div>
+        
         
         <div class="field-group">
             <label for="event-dialog-start">
@@ -34,7 +47,7 @@
             <label for="event-dialog-all-day">
                 Toute la journée
             </label>
-            <input class="text" type="checkbox" id="all_day">
+            <input class="text" type="checkbox" id="event-dialog-all-day">
         </div>
         
         
@@ -47,7 +60,7 @@
         </div>
         
         
-        
+    </div>    
 	</form>
     
     

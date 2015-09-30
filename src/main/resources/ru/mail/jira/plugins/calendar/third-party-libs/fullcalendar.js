@@ -6,7 +6,7 @@
 
 (function(factory) {
 	if (typeof define === 'function' && define.amd) {
-		define([ 'jquery.json-2.3.js', 'moment' ], factory);
+		define([ 'jquery', 'moment' ], factory);
 	}
 	else if (typeof exports === 'object') { // Node/CommonJS
 		module.exports = factory(require('jquery'), require('moment'));
@@ -5065,13 +5065,12 @@ DayGrid.mixin({
 
 	// Builds the HTML to be used for the default element for an individual segment
 	fgSegHtml: function(seg, disableResizing) {
-
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
 		var isResizableFromStart = !disableResizing && event.allDay &&
 			seg.isStart && view.isEventResizableFromStart(event);
-		var isResizableFromEnd = !disableResizing &&
+		var isResizableFromEnd = !disableResizing && event.allDay &&
 			seg.isEnd && view.isEventResizableFromEnd(event);
 		var classes = this.getSegClasses(seg, isDraggable, isResizableFromStart || isResizableFromEnd);
 		var skinCss = cssToStr(this.getEventSkinCss(event));
@@ -5109,6 +5108,9 @@ DayGrid.mixin({
 						titleHtml + ' ' + timeHtml : // put a natural space in between
 						timeHtml + ' ' + titleHtml   //
 						) +
+						'<span class="glyphicon glyphicon-trash pull-right"></span>'
+						+
+						
 				'</div>' +
 				(isResizableFromStart ?
 					'<div class="fc-resizer fc-start-resizer" />' :
@@ -6266,7 +6268,6 @@ TimeGrid.mixin({
 
 	// Renders the HTML for a single event segment's default rendering
 	fgSegHtml: function(seg, disableResizing) {
-		console.log("6270");
 		var view = this.view;
 		var event = seg.event;
 		var isDraggable = view.isEventDraggable(event);
@@ -6322,6 +6323,9 @@ TimeGrid.mixin({
 						'</div>' :
 						''
 						) +
+						
+						'<div class="glyphicon glyphicon-trash pull-left"></div>'  +
+						
 				'</div>' +
 				'<div class="fc-bg"/>' +
 				/* TODO: write CSS for this
@@ -8472,7 +8476,6 @@ Calendar.defaults = {
 		nextYear: "next year",
 		year: 'year', // TODO: locale files need to specify this
 		today: 'today',
-		quarter: 'quarter',
 		month: 'month',
 		week: 'week',
 		day: 'day'
@@ -10457,7 +10460,7 @@ fcViews.basicDay = {
 	duration: { days: 1 }
 };
 
-fcViews.agendaWeek = {
+fcViews.basicWeek = {
 	type: 'basic',
 	duration: { weeks: 1 }
 };

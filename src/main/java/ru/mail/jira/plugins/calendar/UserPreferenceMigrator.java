@@ -122,7 +122,8 @@ public class UserPreferenceMigrator {
                 }
 
                 log.info("showedCalendars => " + showedCalendars);
-                calendarManager.updateUserData(userKey, oldUserPreferences.defaultView, oldUserPreferences.hideWeekend, showedCalendars);
+                calendarManager.updateUserData(userKey, oldUserPreferences.defaultView, oldUserPreferences.hideWeekend, oldUserPreferences.hideVersion, oldUserPreferences.hideCustomEvent,
+                        showedCalendars);
                 pluginSettings.remove(prefKey(user.getName()));
             } catch (Exception e) {
                 log.error("Error while trying to migrate user preferences for user => " + user.getName(), e);
@@ -170,6 +171,8 @@ public class UserPreferenceMigrator {
     class MigratedUserPreferences {
         String defaultView;
         boolean hideWeekend;
+        boolean hideVersion;
+        boolean hideCustomEvent;
         Set<Long> shadowCalendars;
 
         @Override
@@ -177,6 +180,9 @@ public class UserPreferenceMigrator {
             return "MigratedUserPreferences{" +
                     "defaultView='" + defaultView + '\'' +
                     ", hideWeekend=" + hideWeekend +
+ ", hideVersion=" + hideVersion +
+ ", hideCustomEvent=" + hideCustomEvent
+                    +
                     ", shadowCalendars=" + shadowCalendars +
                     '}';
         }

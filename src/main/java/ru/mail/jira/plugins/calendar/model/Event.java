@@ -26,6 +26,8 @@ public class Event {
     private boolean durationEditable;
     @XmlElement
     private boolean startEditable;
+    @XmlElement
+    private boolean customEvent = false;
 
     public String getId() {
         return id;
@@ -106,4 +108,25 @@ public class Event {
     public void setStartEditable(boolean startEditable) {
         this.startEditable = startEditable;
     }
+
+    public boolean isCustomEvent() {
+        return customEvent;
+    }
+
+    public void setCustomEvent(boolean customEvent) {
+        this.customEvent = customEvent;
+    }
+
+    public Event(IEvent event) {
+        this.id = Integer.toString(event.getID());
+        this.issueKey = event.getIssueKey();
+        this.color = event.getColor();
+        this.start = event.getStart();
+        this.end = event.getEnd();
+        this.allDay = event.getAllDay();
+    }
+
+    public Event() {
+    }
+
 }
