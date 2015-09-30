@@ -33,6 +33,14 @@
             <div id="calendar-dialog-color-error" class="error hidden"></div>
         </div>
         
+                
+        <div class="field-group">
+            <label for="event-dialog-all-day">
+                Toute la journée
+            </label>
+            <input class="text" type="checkbox" id="event-dialog-all-day">
+        </div>
+        
         
         <div class="field-group">
             <label for="event-dialog-start">
@@ -40,14 +48,6 @@
                 Début de l'événement
             </label>
             <input class="text" type="text" id="date_timepicker_start" maxlength="20">
-        </div>
-        
-        
-        <div class="field-group">
-            <label for="event-dialog-all-day">
-                Toute la journée
-            </label>
-            <input class="text" type="checkbox" id="event-dialog-all-day">
         </div>
         
         

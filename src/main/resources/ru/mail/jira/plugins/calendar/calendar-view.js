@@ -1432,18 +1432,42 @@ alert(out);
         }
         
         
+        $("#event-dialog-all-day").click(function() {
+  		  if ($("#event-dialog-all-day").is(":checked"))  {
+
+	          	jQuery('#date_timepicker_start').datetimepicker({
+	          			format:'d/m/Y ',
+	          			timepicker:false,
+	          			value:''
+	            	  });
+	          	
+	          	jQuery('#date_timepicker_end').datetimepicker({
+	          		format:'d/m/Y ',
+	          		timepicker:false,
+	          		value:''
+	          	  });
+  			  }
+  		  else {
+
+          	jQuery('#date_timepicker_start').datetimepicker({
+          			format:'d/m/Y H:i',
+          			timepicker:true,
+          			value:''
+            	  }); 
+          	jQuery('#date_timepicker_end').datetimepicker({
+          			format:'d/m/Y H:i',
+          			timepicker:true,
+          			value:''
+	          	  });
+          	
+  		  }
+        });
+        
 
         
         
         jQuery(function(){
-        	
-        	
-  		  var allDay = true;
-		  if ($("#event-dialog-all-day").is(":checked"))  {
-		   allDay = false;
-		  }
 
-        	
         	 jQuery('#date_timepicker_start').datetimepicker({
         	  format:'d/m/Y H:i',
 	      	 	mask:true,
@@ -1451,14 +1475,7 @@ alert(out);
 	    		step:5,
         	  onShow:function( ct ){
         	  },
-        	  timepicker:function(){
-          		  var allDay = true;
-        		  if ($("#event-dialog-all-day").is(":checked"))  {
-        		   allDay = false;
-        		  }
-        		  alert(allDay);
-        		  return allDay;
-        	  }
+        	  timepicker:true
 
         	 });
         	 jQuery('#date_timepicker_end').datetimepicker({
